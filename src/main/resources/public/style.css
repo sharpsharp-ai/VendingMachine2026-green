@@ -307,11 +307,11 @@ button:focus-visible {
 }
 
 .coin--100 {
-  background: radial-gradient(circle at 50% 50%, #e2c46a 0 44%, #d0d3d8 46%, #a9aeb5);
+    background: radial-gradient(circle at 50% 50%, #cfd3d8 0 44%, #dcb95a 46%, #b0893a);
 }
 
 .coin--200 {
-  background: radial-gradient(circle at 50% 50%, #cfd3d8 0 44%, #dcb95a 46%, #b0893a);
+    background: radial-gradient(circle at 50% 50%, #e2c46a 0 44%, #d0d3d8 46%, #a9aeb5);
 }
 
 .abort {
