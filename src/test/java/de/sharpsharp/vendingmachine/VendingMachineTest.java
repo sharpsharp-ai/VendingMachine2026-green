@@ -46,4 +46,16 @@ public class VendingMachineTest{
         //assert
         assertThat(priceBeer, is(200));
     }
+
+    @Test
+    public void creditsAreShown() {
+      //arrange
+      Clock clock = Mockito.mock(Clock.class);
+      vendingMachine = new VendingMachine(clock);
+      vendingMachine.insertCoin(100);
+      //act
+      int credit = vendingMachine.getCredit();
+      //assert
+      assertThat(credit, is(100));
+    }
 }
