@@ -32,4 +32,9 @@ public class VendingMachineSteps {
     public void oneCanLiesInTheOutputTray(Drink drink) {
         assertThat(machine.outputTray(), contains(drink));
     }
+
+    @Dann("kostet eine Dose {drink} {int} Euro")
+    public void oneCanCostsMoney(Drink drink, int money) {
+        assertThat(machine.price(drink), is(money*100));
+    }
 }
