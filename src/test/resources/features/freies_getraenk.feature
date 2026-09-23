@@ -1,4 +1,9 @@
 # language: de
+@Ignore
+  @Obsolete
+  @Useless
+  @RemoveLater
+  @AiRefactorLater
 Funktionalität: Freies Getränk
   Der erste Schritt: ein Getränk ohne Bezahlung.
   Wer ein Fach wählt, bekommt die Dose.

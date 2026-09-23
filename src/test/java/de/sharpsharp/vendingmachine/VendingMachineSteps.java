@@ -7,6 +7,7 @@ import io.cucumber.java.de.Wenn;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 
 /**
@@ -29,9 +30,24 @@ public class VendingMachineSteps {
         machine.selectDrink(drink);
     }
 
+    @Wenn("{int} Euro im Automat sind")
+    public void moneyInTheAutomaton(int moneyInEuro) {
+        machine.insertCoin(moneyInEuro * 100);
+    }
+
+    @Wenn("kein Geld im Automat ist")
+    public void noMoneyInTheAutomaton() {
+        moneyInTheAutomaton(0);
+    }
+
     @Dann("liegt eine Dose {drink} im Ausgabefach")
     public void oneCanLiesInTheOutputTray(Drink drink) {
         assertThat(machine.outputTray(), contains(drink));
+    }
+
+    @Dann("ist das Ausgabefach leer")
+    public void outputTrayEmpty() {
+        assertThat(machine.outputTray(), is(empty()));
     }
 
     @Dann("kostet eine Dose {drink} {int} Euro")
@@ -69,5 +85,16 @@ public class VendingMachineSteps {
     @Wenn("ich die Münzrückgabe entleere")
     public void iEmptyTheCoinReturn() {
         machine.emptyChange();
+    }
+
+    //     am Display wird "Prost!" angezeigt
+    @Dann("am Display wird {string} angezeigt")
+    public void displayShowsMessage(String message) {
+        assertThat(machine.message(), is(message));
+    }
+
+    @Dann("ein Restgeld von {int} Euro wird angezeigt")
+    public void displayShowsChange(int changeInEuro) {
+        assertThat(machine.getCredit(), is(changeInEuro));
     }
 }

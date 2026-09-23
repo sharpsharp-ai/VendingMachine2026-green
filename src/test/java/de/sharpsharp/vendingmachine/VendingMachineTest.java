@@ -1,12 +1,12 @@
 package de.sharpsharp.vendingmachine;
 
-import java.time.LocalTime;
-
+import java.util.List;
 import org.mockito.Mockito;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 
 public class VendingMachineTest{
@@ -14,15 +14,12 @@ public class VendingMachineTest{
     
     @Test
     public void drinksAreFree() {
-        //arrange
         Clock clock = Mockito.mock(Clock.class);
         vendingMachine = new VendingMachine(clock);
-        //act
         vendingMachine.selectDrink(Drink.COLA);
-        //assert
-        var outputTray = vendingMachine.outputTray();
-        assertThat(outputTray, contains(Drink.COLA));
-        
+        List<Drink> outputTray = vendingMachine.outputTray();
+        assertThat(outputTray, is(empty()));
+        assertThat(vendingMachine.message(), is("zu wenig Geld"));
     }
 
     @Test
@@ -105,5 +102,58 @@ public class VendingMachineTest{
         //assert
         assertThat(vendingMachine.getCredit(), is(0));
         assertThat(vendingMachine.coinReturn().size(), is(0));
+    }
+
+    @Test
+    public void sufficientCreditAllowsPurchase() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(200);
+        vendingMachine.selectDrink(Drink.COLA);
+        List<Drink> outputTray = vendingMachine.outputTray();
+        assertThat(outputTray, contains(Drink.COLA));
+        assertThat(vendingMachine.message(), is("Prost!"));
+        assertThat(vendingMachine.getCredit(), is(100));
+    }
+
+    @Test
+    public void insufficientCreditBlocksPurchase() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(50);
+        vendingMachine.selectDrink(Drink.BEER);
+        List<Drink> outputTray = vendingMachine.outputTray();
+        assertThat(outputTray, is(empty()));
+        assertThat(vendingMachine.message(), is("zu wenig Geld"));
+        assertThat(vendingMachine.refused(), is(true));
+    }
+
+    @Test
+    public void changeAfterPurchase() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(200);
+        vendingMachine.selectDrink(Drink.COLA);
+        assertThat(vendingMachine.getCredit(), is(100));
+    }
+
+    @Test
+    public void beerRequiresTwoEuros() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(100);
+        vendingMachine.selectDrink(Drink.BEER);
+        List<Drink> outputTray = vendingMachine.outputTray();
+        assertThat(outputTray, is(empty()));
+        assertThat(vendingMachine.refused(), is(true));
+    }
+
+    @Test
+    public void noCreditShowsInsufficientMessage() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.selectDrink(Drink.COLA);
+        assertThat(vendingMachine.message(), is("zu wenig Geld"));
+        assertThat(vendingMachine.refused(), is(true));
     }
 }

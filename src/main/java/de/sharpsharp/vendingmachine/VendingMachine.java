@@ -21,6 +21,8 @@ public class VendingMachine {
     private final Clock clock;
     private List<Drink> selectedDrinks = new ArrayList<>();
     private int credit = 0;
+    private String displayMessage = "Bitte Münzen einwerfen";
+    private boolean refused = false;
     private List<Integer> coinReturn = new ArrayList<>();
 
     public VendingMachine(Clock clock) {
@@ -41,7 +43,16 @@ public class VendingMachine {
     }
 
     public synchronized void selectDrink(Drink drink) {
+        int price = drink.price();
+        if (credit < price) {
+            displayMessage = "zu wenig Geld";
+            refused = true;
+            return;
+        }
+        refused = false;
+        credit -= price;
         selectedDrinks.add(drink);
+        displayMessage = "Prost!";
     }
 
     public synchronized void cancel() {
@@ -70,12 +81,12 @@ public class VendingMachine {
     }
 
     public synchronized String message() {
-        return "Bitte Münzen einwerfen";
+        return displayMessage;
     }
 
     /** True while the display shows a refusal such as "Ausverkauft"; the page then flashes it red. */
     public synchronized boolean refused() {
-        return false;
+        return refused;
     }
 
     public synchronized int stock(Drink drink) {

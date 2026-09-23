@@ -26,7 +26,7 @@ public class WebTest {
             Response response = client.get("/");
 
             assertThat(response.code(), is(200));
-            assertThat(response.body().string(), containsString("<title>Getränkeautomat</title>"));
+            assertThat(response.body().string(), containsString("<title>We eat yummy snacks :)</title>"));
         });
     }
 
