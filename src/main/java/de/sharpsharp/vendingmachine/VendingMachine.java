@@ -65,12 +65,16 @@ public class VendingMachine {
 
     /** Empties the output tray and returns the cans that were in it. */
     public synchronized List<Drink> takeDrinks() {
-        return List.of();
+        List<Drink> drinks = selectedDrinks;
+        selectedDrinks = new ArrayList<>();
+        return drinks;
     }
 
     /** Empties the coin return and returns the coins that were in it, in cents. */
     public synchronized List<Integer> takeCoins() {
-        return List.of();
+        List<Integer> coins = new ArrayList<>(coinReturn);
+        coinReturn.clear();
+        return coins;
     }
 
     // ---- What the machine shows ---------------------------------------------
