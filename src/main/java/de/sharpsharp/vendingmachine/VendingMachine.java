@@ -66,7 +66,7 @@ public class VendingMachine {
 
     /** In cents. */
     public synchronized int credit() {
-        return 0;
+        return credit;
     }
 
     public synchronized String message() {
