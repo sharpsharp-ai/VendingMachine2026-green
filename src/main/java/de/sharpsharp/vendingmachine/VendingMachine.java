@@ -20,6 +20,7 @@ public class VendingMachine {
     /** The time of day, for rules that depend on it. Never read the system time directly: ask the clock. */
     private final Clock clock;
     private List<Drink> selectedDrinks = new ArrayList<>();
+    private int credit = 0;
 
     public VendingMachine(Clock clock) {
         this.clock = clock;
@@ -31,6 +32,11 @@ public class VendingMachine {
     // ---- What a customer can do --------------------------------------------
 
     public synchronized void insertCoin(int cents) {
+      credit += cents;
+    }
+
+    public int getCredit() {
+      return credit;
     }
 
     public synchronized void selectDrink(Drink drink) {
@@ -72,7 +78,7 @@ public class VendingMachine {
 
     /** The price shown behind the name of the drink, in cents. Null: the machine knows no price yet. */
     public synchronized Integer price(Drink drink) {
-        return null;
+        return drink.price();
     }
 
     /** The cans that dropped out and have not been taken yet. */
