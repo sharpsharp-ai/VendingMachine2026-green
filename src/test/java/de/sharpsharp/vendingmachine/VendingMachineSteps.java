@@ -37,4 +37,17 @@ public class VendingMachineSteps {
     public void oneCanCostsMoney(Drink drink, int money) {
         assertThat(machine.price(drink), is(money*100));
     }
+
+    @Wenn("ich Münzen im Wert von {string} einwerfe")
+    public void ichImWertVonEinwerfe(String coin_value) {
+        Coin coin = Enum.valueOf(Coin.class, coin_value);
+        machine.insertCoin(coin.value());
+    }
+    
+    @Dann("habe ich ein Guthaben von {string} Euro")
+    public void iHaveCredits(String expected_credit) {
+        Coin coin = Enum.valueOf(Coin.class, expected_credit);
+        int expected_credit_int = coin.value();
+        assertThat(machine.getCredit(), is(expected_credit_int));
+    }
 }
