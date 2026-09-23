@@ -58,4 +58,52 @@ public class VendingMachineTest{
       //assert
       assertThat(credit, is(100));
     }
+
+    @Test
+    public void cancelReturnsCreditToCoinReturn() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(200);
+        //act
+        vendingMachine.cancel();
+        //assert
+        assertThat(vendingMachine.getCredit(), is(0));
+        assertThat(vendingMachine.coinReturn(), contains(200));
+    }
+
+    @Test
+    public void showChangeReturnsTotalCoinReturn() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(200);
+        vendingMachine.cancel();
+        //act
+        int change = vendingMachine.showChange();
+        //assert
+        assertThat(change, is(200));
+    }
+
+    @Test
+    public void emptyChangeClearsCoinReturn() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(200);
+        vendingMachine.cancel();
+        //act
+        vendingMachine.emptyChange();
+        //assert
+        assertThat(vendingMachine.showChange(), is(0));
+        assertThat(vendingMachine.coinReturn().size(), is(0));
+    }
+
+    @Test
+    public void cancelWithNoCreditDoesNothing() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        //act
+        vendingMachine.cancel();
+        //assert
+        assertThat(vendingMachine.getCredit(), is(0));
+        assertThat(vendingMachine.coinReturn().size(), is(0));
+    }
 }
