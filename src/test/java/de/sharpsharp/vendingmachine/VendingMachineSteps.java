@@ -2,6 +2,7 @@ package de.sharpsharp.vendingmachine;
 
 import io.cucumber.java.de.Angenommen;
 import io.cucumber.java.de.Dann;
+import io.cucumber.java.de.Und;
 import io.cucumber.java.de.Wenn;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -49,5 +50,24 @@ public class VendingMachineSteps {
         Coin coin = Enum.valueOf(Coin.class, expected_credit);
         int expected_credit_int = coin.value();
         assertThat(machine.getCredit(), is(expected_credit_int));
+    }
+
+    @Und("ich den Vorgang abbreche")
+    public void iCancelTheProcess() {
+        machine.cancel();
+    }
+
+    @Und("sehe ich Münzen im Wert von {string} in der Münzrückgabe")
+    public void iSeeCoinsWithValue(String coin_value) {
+        Coin coin = Enum.valueOf(Coin.class, coin_value);
+        int expected_value = coin.value();
+        
+        int actual_value = machine.showChange();
+        assertThat(actual_value, is(expected_value));
+    }
+
+    @Wenn("ich die Münzrückgabe entleere")
+    public void iEmptyTheCoinReturn() {
+        machine.emptyChange();
     }
 }

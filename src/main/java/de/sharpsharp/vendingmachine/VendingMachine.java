@@ -21,6 +21,7 @@ public class VendingMachine {
     private final Clock clock;
     private List<Drink> selectedDrinks = new ArrayList<>();
     private int credit = 0;
+    private List<Integer> coinReturn = new ArrayList<>();
 
     public VendingMachine(Clock clock) {
         this.clock = clock;
@@ -44,6 +45,11 @@ public class VendingMachine {
     }
 
     public synchronized void cancel() {
+        if (credit > 0) {
+            coinReturn.add(credit);
+            credit = 0;
+        }
+        selectedDrinks.clear();
     }
 
     /** Empties the output tray and returns the cans that were in it. */
@@ -88,6 +94,20 @@ public class VendingMachine {
 
     /** The coins that came back and have not been taken yet, in cents. */
     public synchronized List<Integer> coinReturn() {
-        return List.of();
+        return new ArrayList<>(coinReturn);
+    }
+
+    /* Returns the value of coins in the change slot */
+    public int showChange() {
+        int total = 0;
+        for (int coin : coinReturn) {
+            total += coin;
+        }
+        return total;
+    }
+
+    /* Empties the coins in the change slot */
+    public void emptyChange() {
+        coinReturn.clear();
     }
 }
