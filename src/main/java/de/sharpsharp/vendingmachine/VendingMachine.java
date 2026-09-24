@@ -53,6 +53,9 @@ public class VendingMachine {
         if (isTrayFull()) {
             return;
         }
+        if (isSoldOut(drink)) {
+            return;
+        }
         int price = drink.price();
         if (credit < price) {
             displayMessage = "zu wenig Geld";
@@ -63,6 +66,15 @@ public class VendingMachine {
         credit -= price;
         selectedDrinks.add(drink);
         displayMessage = "Prost!";
+    }
+
+    private boolean isSoldOut(Drink drink) {
+        if (stock.get(drink) <= 0) {
+            displayMessage = "Ausverkauft";
+            refused = true;
+            return true;
+        }
+        return false;
     }
 
     private boolean isTrayFull() {
@@ -127,6 +139,10 @@ public class VendingMachine {
 
     public synchronized int stock(Drink drink) {
         return stock.get(drink);
+    }
+
+    public synchronized void setStock(Drink drink, int amount) {
+        stock.put(drink, amount);
     }
 
     /** The price shown behind the name of the drink, in cents. Null: the machine knows no price yet. */

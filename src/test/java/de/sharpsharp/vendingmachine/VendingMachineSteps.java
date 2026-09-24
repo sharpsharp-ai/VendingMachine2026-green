@@ -27,6 +27,11 @@ public class VendingMachineSteps {
         // Nothing to do: Cucumber builds this class, and with it the machine, fresh for every scenario.
     }
 
+    @Wenn("ich {drink} das Fach leer mache")
+    public void iEmptyTheSlot(Drink drink) {
+        machine.setStock(drink, 0);
+    }
+
     @Wenn("ich {drink} wähle")
     public void iSelect(Drink drink) {
         machine.selectDrink(drink);
