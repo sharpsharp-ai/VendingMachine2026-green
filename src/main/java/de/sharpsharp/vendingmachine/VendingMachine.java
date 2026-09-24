@@ -17,6 +17,7 @@ import java.util.Map;
 public class VendingMachine {
 
     public static final int CANS_PER_SLOT = 5;
+    public static final int MAX_TRAY_CAPACITY = 3;
 
     private final Map<Drink, Integer> stock = new EnumMap<>(Drink.class);
     /** The time of day, for rules that depend on it. Never read the system time directly: ask the clock. */
@@ -56,6 +57,12 @@ public class VendingMachine {
         if (refuseBeerBeforeFour(drink)) {
             return;
         }
+        if (isTrayFull()) {
+            return;
+        }
+        if (isSoldOut(drink)) {
+            return;
+        }
         int price = drink.price();
         if (credit < price) {
             displayMessage = "zu wenig Geld";
@@ -66,6 +73,24 @@ public class VendingMachine {
         credit -= price;
         selectedDrinks.add(drink);
         displayMessage = "Prost!";
+    }
+
+    private boolean isSoldOut(Drink drink) {
+        if (stock.get(drink) <= 0) {
+            displayMessage = "Ausverkauft";
+            refused = true;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isTrayFull() {
+        if (selectedDrinks.size() >= MAX_TRAY_CAPACITY) {
+            displayMessage = "Bitte Ausgabefach leeren";
+            refused = true;
+            return true;
+        }
+        return false;
     }
 
     private void handleFault() {
@@ -137,6 +162,10 @@ public class VendingMachine {
 
     public synchronized int stock(Drink drink) {
         return stock.get(drink);
+    }
+
+    public synchronized void setStock(Drink drink, int amount) {
+        stock.put(drink, amount);
     }
 
     /** The price shown behind the name of the drink, in cents. Null: the machine knows no price yet. */

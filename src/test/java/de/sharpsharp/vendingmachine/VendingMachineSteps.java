@@ -8,8 +8,8 @@ import io.cucumber.java.de.Und;
 import io.cucumber.java.de.Wenn;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 
 /**
@@ -25,6 +25,11 @@ public class VendingMachineSteps {
     @Angenommen("der Automat ist frisch gestartet")
     public void theMachineIsFreshlyStarted() {
         // Nothing to do: Cucumber builds this class, and with it the machine, fresh for every scenario.
+    }
+
+    @Wenn("ich {drink} das Fach leer mache")
+    public void iEmptyTheSlot(Drink drink) {
+        machine.setStock(drink, 0);
     }
 
     @Wenn("ich {drink} wähle")
@@ -44,12 +49,17 @@ public class VendingMachineSteps {
 
     @Dann("liegt eine Dose {drink} im Ausgabefach")
     public void oneCanLiesInTheOutputTray(Drink drink) {
-        assertThat(machine.outputTray(), contains(drink));
+        assertThat(machine.outputTray(), hasItem(drink));
     }
 
     @Dann("ist das Ausgabefach leer")
     public void outputTrayEmpty() {
         assertThat(machine.outputTray(), is(empty()));
+    }
+
+    @Dann("ist das Ausgabefach voll")
+    public void outputTrayFull() {
+        assertThat(machine.outputTray().size(), is(3));
     }
 
     @Dann("kostet eine Dose {drink} {int} Euro")
@@ -89,6 +99,12 @@ public class VendingMachineSteps {
         machine.emptyChange();
     }
 
+    @Wenn("ich die Dose aus dem Ausgabefach nehme")
+    public void iTakeDrinksFromOutputTray() {
+        machine.takeDrinks();
+    }
+
+    //     am Display wird "Prost!" angezeigt
     @Wenn("es {string} Uhr ist")
     public void setTimeTo(String timeAsString) {
         clock.set(LocalTime.parse(timeAsString));
