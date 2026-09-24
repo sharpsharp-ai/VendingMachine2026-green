@@ -48,10 +48,7 @@
       "permission": {
         "edit": {
           "*": "deny",
-          "src/test/resources/features/*": "allow",
-          "src/test/java/*Steps.java": "allow",
-          "src/test/java/*ParameterTypes.java": "allow",
-          "src/test/java/*Fake*.java": "allow"
+          "src/test/*": "allow"
         }
       }
     },

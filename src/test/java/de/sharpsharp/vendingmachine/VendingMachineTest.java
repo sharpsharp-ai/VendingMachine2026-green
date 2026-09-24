@@ -270,4 +270,158 @@ public class VendingMachineTest{
         assertThat(vendingMachine.getCredit(), is(0));
         assertThat(vendingMachine.showChange(), is(300));
     }
+
+    // ---- Story 10: Kleines Ausgabefach ------------------------------------
+
+    @Test
+    public void outputTrayStartsEmpty() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        assertThat(vendingMachine.outputTray().size(), is(0));
+    }
+
+    @Test
+    public void canSelectUpToThreeDrinks() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(300);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        vendingMachine.selectDrink(Drink.LEMON);
+        assertThat(vendingMachine.outputTray().size(), is(3));
+    }
+
+    @Test
+    public void fourthDrinkIsRejected() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(400);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        vendingMachine.selectDrink(Drink.LEMON);
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.outputTray().size(), is(3));
+    }
+
+    @Test
+    public void fourthDrinkShowsTrayFullMessage() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(400);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        vendingMachine.selectDrink(Drink.LEMON);
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.message(), is("Bitte Ausgabefach leeren"));
+    }
+
+    @Test
+    public void fourthDrinkSetsRefused() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(400);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        vendingMachine.selectDrink(Drink.LEMON);
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.refused(), is(true));
+    }
+
+    @Test
+    public void selectingDrinkWhenTrayFullDoesNotConsumeCredit() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(500);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        vendingMachine.selectDrink(Drink.LEMON);
+        int creditBefore = vendingMachine.getCredit();
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.getCredit(), is(creditBefore));
+    }
+
+    @Test
+    public void takeDrinksEmptiesOutputTray() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(300);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        vendingMachine.selectDrink(Drink.LEMON);
+        vendingMachine.takeDrinks();
+        assertThat(vendingMachine.outputTray().size(), is(0));
+    }
+
+    @Test
+    public void takeDrinksReturnsTakenDrinks() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(300);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        vendingMachine.selectDrink(Drink.LEMON);
+        List<Drink> taken = vendingMachine.takeDrinks();
+        assertThat(taken, contains(Drink.COLA, Drink.ORANGE, Drink.LEMON));
+    }
+
+    @Test
+    public void afterEmptyTrayCanSelectMoreDrinks() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(500);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        vendingMachine.selectDrink(Drink.LEMON);
+        vendingMachine.takeDrinks();
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.outputTray().size(), is(1));
+    }
+
+    @Test
+    public void afterEmptyTrayMessageIsCleared() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(500);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        vendingMachine.selectDrink(Drink.LEMON);
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.message(), is("Bitte Ausgabefach leeren"));
+        vendingMachine.takeDrinks();
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.message(), is("Prost!"));
+    }
+
+    @Test
+    public void afterEmptyTrayRefusedIsCleared() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(500);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        vendingMachine.selectDrink(Drink.LEMON);
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.refused(), is(true));
+        vendingMachine.takeDrinks();
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.refused(), is(false));
+    }
+
+    @Test
+    public void canSelectLessThanThreeDrinks() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(200);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        assertThat(vendingMachine.outputTray().size(), is(2));
+    }
+
+    @Test
+    public void takeEmptyTrayReturnsEmptyList() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        List<Drink> taken = vendingMachine.takeDrinks();
+        assertThat(taken, is(empty()));
+    }
 }
