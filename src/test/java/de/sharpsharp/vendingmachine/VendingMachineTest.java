@@ -105,6 +105,33 @@ public class VendingMachineTest{
     }
 
     @Test
+    public void faultShowsServiceMessageAndReturnsCredit() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(200);
+        vendingMachine.hasFault();
+        //act
+        vendingMachine.selectDrink(Drink.COLA);
+        //assert
+        assertThat(vendingMachine.message(), is("Störung – Service: 0800 123 456"));
+        assertThat(vendingMachine.refused(), is(true));
+        assertThat(vendingMachine.getCredit(), is(0));
+        assertThat(vendingMachine.showChange(), is(200));
+    }
+
+    @Test
+    public void faultPreventsDrinkSelection() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(200);
+        vendingMachine.hasFault();
+        //act
+        vendingMachine.selectDrink(Drink.COLA);
+        //assert
+        assertThat(vendingMachine.outputTray().size(), is(0));
+    }
+
+    @Test
     public void sufficientCreditAllowsPurchase() {
         Clock clock = Mockito.mock(Clock.class);
         vendingMachine = new VendingMachine(clock);
@@ -155,5 +182,92 @@ public class VendingMachineTest{
         vendingMachine.selectDrink(Drink.COLA);
         assertThat(vendingMachine.message(), is("zu wenig Geld"));
         assertThat(vendingMachine.refused(), is(true));
+    }
+
+    @Test
+    public void faultShowsMessageImmediately() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.hasFault();
+        //assert
+        assertThat(vendingMachine.message(), is("Störung – Service: 0800 123 456"));
+    }
+
+    @Test
+    public void faultSetsRefused() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.hasFault();
+        //assert
+        assertThat(vendingMachine.refused(), is(true));
+    }
+
+    @Test
+    public void faultRefundsSelectedDrinkPrice() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(200);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.hasFault();
+        //assert
+        assertThat(vendingMachine.getCredit(), is(0));
+        assertThat(vendingMachine.showChange(), is(200));
+    }
+
+    @Test
+    public void faultRefundsBeerPrice() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(500);
+        vendingMachine.selectDrink(Drink.BEER);
+        vendingMachine.hasFault();
+        //assert
+        assertThat(vendingMachine.getCredit(), is(0));
+        assertThat(vendingMachine.showChange(), is(500));
+    }
+
+    @Test
+    public void faultWithNoCreditStillShowsMessage() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.hasFault();
+        //assert
+        assertThat(vendingMachine.message(), is("Störung – Service: 0800 123 456"));
+        assertThat(vendingMachine.showChange(), is(0));
+    }
+
+    @Test
+    public void faultEmptiesOutputTray() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(200);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.hasFault();
+        //assert
+        assertThat(vendingMachine.outputTray().size(), is(0));
+    }
+
+    @Test
+    public void faultDoesNotAddDrinkToOutputTray() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(200);
+        vendingMachine.hasFault();
+        vendingMachine.selectDrink(Drink.COLA);
+        //assert
+        assertThat(vendingMachine.outputTray().size(), is(0));
+    }
+
+    @Test
+    public void faultWithMultipleDrinksRefundsAll() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        vendingMachine.insertCoin(300);
+        vendingMachine.selectDrink(Drink.COLA);
+        vendingMachine.selectDrink(Drink.ORANGE);
+        vendingMachine.hasFault();
+        //assert
+        assertThat(vendingMachine.getCredit(), is(0));
+        assertThat(vendingMachine.showChange(), is(300));
     }
 }

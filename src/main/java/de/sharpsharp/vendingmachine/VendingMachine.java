@@ -1,6 +1,7 @@
 package de.sharpsharp.vendingmachine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ public class VendingMachine {
     private String displayMessage = "Bitte Münzen einwerfen";
     private boolean refused = false;
     private List<Integer> coinReturn = new ArrayList<>();
+    private boolean fault = false;
 
     public VendingMachine(Clock clock) {
         this.clock = clock;
@@ -35,14 +37,18 @@ public class VendingMachine {
     // ---- What a customer can do --------------------------------------------
 
     public synchronized void insertCoin(int cents) {
-      credit += cents;
+        credit += cents;
     }
 
-    public int getCredit() {
-      return credit;
+    public synchronized int getCredit() {
+        return credit;
     }
 
     public synchronized void selectDrink(Drink drink) {
+        if (fault) {
+            handleFault();
+            return;
+        }
         int price = drink.price();
         if (credit < price) {
             displayMessage = "zu wenig Geld";
@@ -55,9 +61,22 @@ public class VendingMachine {
         displayMessage = "Prost!";
     }
 
-    public synchronized void cancel() {
+    private void handleFault() {
+        displayMessage = "Störung – Service: 0800 123 456";
+        refused = true;
+        for (Drink drink : selectedDrinks) {
+            credit += drink.price();
+        }
+        selectedDrinks.clear();
         if (credit > 0) {
             coinReturn.add(credit);
+            credit = 0;
+        }
+    }
+
+    public synchronized void cancel() {
+        if (credit > 0) {
+            returnChange(credit);
             credit = 0;
         }
         selectedDrinks.clear();
@@ -65,12 +84,16 @@ public class VendingMachine {
 
     /** Empties the output tray and returns the cans that were in it. */
     public synchronized List<Drink> takeDrinks() {
-        return List.of();
+        List<Drink> drinks = selectedDrinks;
+        selectedDrinks = new ArrayList<>();
+        return drinks;
     }
 
     /** Empties the coin return and returns the coins that were in it, in cents. */
     public synchronized List<Integer> takeCoins() {
-        return List.of();
+        List<Integer> coins = new ArrayList<>(coinReturn);
+        coinReturn.clear();
+        return coins;
     }
 
     // ---- What the machine shows ---------------------------------------------
@@ -108,7 +131,6 @@ public class VendingMachine {
         return new ArrayList<>(coinReturn);
     }
 
-    /* Returns the value of coins in the change slot */
     public int showChange() {
         int total = 0;
         for (int coin : coinReturn) {
@@ -117,8 +139,26 @@ public class VendingMachine {
         return total;
     }
 
-    /* Empties the coins in the change slot */
     public void emptyChange() {
         coinReturn.clear();
+    }
+
+    private void returnChange(int cents) {
+        Coin[] sorted = Coin.values().clone();
+        Arrays.sort(sorted, (a, b) -> b.value() - a.value());
+        for (Coin coin : sorted) {
+            if (coin.value() == 0) {
+                continue;
+            }
+            while (cents >= coin.value()) {
+                coinReturn.add(coin.value());
+                cents -= coin.value();
+            }
+        }
+    }
+
+    public void hasFault() {
+        fault = true;
+        handleFault();
     }
 }

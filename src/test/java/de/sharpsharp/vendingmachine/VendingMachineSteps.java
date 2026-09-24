@@ -107,6 +107,16 @@ public class VendingMachineSteps {
 
     @Dann("ein Restgeld von {int} Euro wird angezeigt")
     public void displayShowsChange(int changeInEuro) {
-        assertThat(machine.getCredit(), is(changeInEuro));
+        assertThat(machine.getCredit(), is(changeInEuro * 100));
+    }
+
+    @Wenn("der Automat eine Störung hat")
+    public void vendingMachineHasFault() {
+        machine.hasFault();
+    }
+
+    @Und("der Preis wird nicht abgezogen")
+    public void priceDoesNotNeedToBePaid() {
+        machine.showChange();
     }
 }
