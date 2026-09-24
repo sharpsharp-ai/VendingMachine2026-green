@@ -1,5 +1,7 @@
 package de.sharpsharp.vendingmachine;
 
+import java.time.LocalTime;
+
 import io.cucumber.java.de.Angenommen;
 import io.cucumber.java.de.Dann;
 import io.cucumber.java.de.Und;
@@ -74,8 +76,8 @@ public class VendingMachineSteps {
     }
 
     @Und("sehe ich Münzen im Wert von {string} in der Münzrückgabe")
-    public void iSeeCoinsWithValue(String coin_value) {
-        Coin coin = Enum.valueOf(Coin.class, coin_value);
+    public void iSeeCoinsWithValue(String coinValue) {
+        Coin coin = Enum.valueOf(Coin.class, coinValue);
         int expected_value = coin.value();
         
         int actual_value = machine.showChange();
@@ -87,11 +89,21 @@ public class VendingMachineSteps {
         machine.emptyChange();
     }
 
-    //     am Display wird "Prost!" angezeigt
+    @Wenn("es {string} Uhr ist")
+    public void setTimeTo(String timeAsString) {
+        clock.set(LocalTime.parse(timeAsString));
+    }
+
     @Dann("am Display wird {string} angezeigt")
     public void displayShowsMessage(String message) {
         assertThat(machine.message(), is(message));
     }
+
+    @Dann("{string} wird gesagt")
+    public void vendingMachineSpeaksToMePersonallyItLovesMe(String message) {
+        assertThat(machine.), is(message));
+    }
+
 
     @Dann("ein Restgeld von {int} Euro wird angezeigt")
     public void displayShowsChange(int changeInEuro) {
