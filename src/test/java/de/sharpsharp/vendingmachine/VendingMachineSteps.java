@@ -99,12 +99,6 @@ public class VendingMachineSteps {
         assertThat(machine.message(), is(message));
     }
 
-    @Dann("{string} wird gesagt")
-    public void vendingMachineSpeaksToMePersonallyItLovesMe(String message) {
-        assertThat(machine.), is(message));
-    }
-
-
     @Dann("ein Restgeld von {int} Euro wird angezeigt")
     public void displayShowsChange(int changeInEuro) {
         assertThat(machine.getCredit(), is(changeInEuro * 100));

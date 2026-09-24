@@ -1,5 +1,6 @@
 package de.sharpsharp.vendingmachine;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -26,6 +27,7 @@ public class VendingMachine {
     private boolean refused = false;
     private List<Integer> coinReturn = new ArrayList<>();
     private boolean fault = false;
+    private int consecutiveCancels = 0;
 
     public VendingMachine(Clock clock) {
         this.clock = clock;
@@ -37,6 +39,7 @@ public class VendingMachine {
     // ---- What a customer can do --------------------------------------------
 
     public synchronized void insertCoin(int cents) {
+        consecutiveCancels = 0;
         credit += cents;
     }
 
@@ -45,8 +48,12 @@ public class VendingMachine {
     }
 
     public synchronized void selectDrink(Drink drink) {
+        consecutiveCancels = 0;
         if (fault) {
             handleFault();
+            return;
+        }
+        if (refuseBeerBeforeFour(drink)) {
             return;
         }
         int price = drink.price();
@@ -74,16 +81,31 @@ public class VendingMachine {
         }
     }
 
+    private boolean refuseBeerBeforeFour(Drink drink) {
+        LocalTime now = clock.now();
+        if (now != null && drink == Drink.BEER && now.isBefore(LocalTime.of(16, 0))) {
+            displayMessage = "Kein Bier vor 4";
+            refused = true;
+            return true;
+        }
+        return false;
+    }
+
     public synchronized void cancel() {
         if (credit > 0) {
             returnChange(credit);
             credit = 0;
         }
         selectedDrinks.clear();
+        consecutiveCancels++;
+        if (consecutiveCancels >= 3) {
+            displayMessage = "Mama, ich habe mich angeschissen";
+        }
     }
 
     /** Empties the output tray and returns the cans that were in it. */
     public synchronized List<Drink> takeDrinks() {
+        consecutiveCancels = 0;
         List<Drink> drinks = selectedDrinks;
         selectedDrinks = new ArrayList<>();
         return drinks;
@@ -91,6 +113,7 @@ public class VendingMachine {
 
     /** Empties the coin return and returns the coins that were in it, in cents. */
     public synchronized List<Integer> takeCoins() {
+        consecutiveCancels = 0;
         List<Integer> coins = new ArrayList<>(coinReturn);
         coinReturn.clear();
         return coins;

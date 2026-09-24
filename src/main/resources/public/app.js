@@ -3,7 +3,7 @@
 'use strict';
 
 // The state comes as plain numbers and names: amounts in cents, drinks by name. Formatting happens here.
-const SPOKEN_ALOUD = new Set(['Kein Bier vor 4']);
+const SPOKEN_ALOUD = new Set(['Kein Bier vor 4', 'zu wenig Geld', 'Prost!', 'Mama, ich habe mich angeschissen']);
 
 const slotsEl = document.getElementById('slots');
 const displayEl = document.getElementById('display');

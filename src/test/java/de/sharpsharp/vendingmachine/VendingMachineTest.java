@@ -1,5 +1,6 @@
 package de.sharpsharp.vendingmachine;
 
+import java.time.LocalTime;
 import java.util.List;
 import org.mockito.Mockito;
 import org.junit.Test;
@@ -269,5 +270,53 @@ public class VendingMachineTest{
         //assert
         assertThat(vendingMachine.getCredit(), is(0));
         assertThat(vendingMachine.showChange(), is(300));
+    }
+
+    @Test
+    public void beerBeforeFourIsRejected() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        Mockito.when(clock.now()).thenReturn(LocalTime.of(15, 59));
+        vendingMachine.insertCoin(200);
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.outputTray(), is(empty()));
+        assertThat(vendingMachine.message(), is("Kein Bier vor 4"));
+        assertThat(vendingMachine.refused(), is(true));
+        assertThat(vendingMachine.getCredit(), is(200));
+    }
+
+    @Test
+    public void beerAtFourIsAllowed() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        Mockito.when(clock.now()).thenReturn(LocalTime.of(16, 0));
+        vendingMachine.insertCoin(200);
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.outputTray(), contains(Drink.BEER));
+        assertThat(vendingMachine.message(), is("Prost!"));
+        assertThat(vendingMachine.refused(), is(false));
+        assertThat(vendingMachine.getCredit(), is(0));
+    }
+
+    @Test
+    public void beerAfterFourIsAllowed() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        Mockito.when(clock.now()).thenReturn(LocalTime.of(17, 30));
+        vendingMachine.insertCoin(200);
+        vendingMachine.selectDrink(Drink.BEER);
+        assertThat(vendingMachine.outputTray(), contains(Drink.BEER));
+        assertThat(vendingMachine.message(), is("Prost!"));
+    }
+
+    @Test
+    public void colaBeforeFourIsAllowed() {
+        Clock clock = Mockito.mock(Clock.class);
+        vendingMachine = new VendingMachine(clock);
+        Mockito.when(clock.now()).thenReturn(LocalTime.of(10, 0));
+        vendingMachine.insertCoin(100);
+        vendingMachine.selectDrink(Drink.COLA);
+        assertThat(vendingMachine.outputTray(), contains(Drink.COLA));
+        assertThat(vendingMachine.message(), is("Prost!"));
     }
 }

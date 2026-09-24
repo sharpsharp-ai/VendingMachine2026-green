@@ -35,14 +35,13 @@ Funktionalität: Man kann ein Getränk kaufen
     Wenn 2 Euro im Automat sind
     Und es 15:59 Uhr ist
     Und ich Bier wähle
-    Dann liegt eine Dose Bier im Ausgabefach
+    Dann ist das Ausgabefach leer
     Und am Display wird "Kein Bier vor 4" angezeigt
-    Und "Kein Bier vor 4" wird gesagt
 
   Szenario: Ein Bier um 4
     Angenommen der Automat ist frisch gestartet
     Wenn 2 Euro im Automat sind
-    Und es 15:59 Uhr ist
+    Und es 16:00 Uhr ist
     Und ich Bier wähle
     Dann liegt eine Dose Bier im Ausgabefach
     Und am Display wird "Prost!" angezeigt
