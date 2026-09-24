@@ -97,4 +97,14 @@ public class VendingMachineSteps {
     public void displayShowsChange(int changeInEuro) {
         assertThat(machine.getCredit(), is(changeInEuro));
     }
+
+    @Wenn("der Automat eine Störung hat")
+    public void vendingMachineHasFault() {
+        machine.hasFault();
+    }
+
+    @Und("der Preis wird nicht abgezogen")
+    public void priceDoesNotNeedToBePaid() {
+        machine.showChange();
+    }
 }

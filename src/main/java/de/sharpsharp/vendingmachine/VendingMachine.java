@@ -25,6 +25,7 @@ public class VendingMachine {
     private String displayMessage = "Bitte Münzen einwerfen";
     private boolean refused = false;
     private List<Integer> coinReturn = new ArrayList<>();
+    private boolean fault = false;
 
     public VendingMachine(Clock clock) {
         this.clock = clock;
@@ -44,6 +45,10 @@ public class VendingMachine {
     }
 
     public synchronized void selectDrink(Drink drink) {
+        if (fault) {
+            handleFault();
+            return;
+        }
         int price = drink.price();
         if (credit < price) {
             displayMessage = "zu wenig Geld";
@@ -54,6 +59,19 @@ public class VendingMachine {
         credit -= price;
         selectedDrinks.add(drink);
         displayMessage = "Prost!";
+    }
+
+    private void handleFault() {
+        displayMessage = "Störung – Service: 0800 123 456";
+        refused = true;
+        for (Drink drink : selectedDrinks) {
+            credit += drink.price();
+        }
+        selectedDrinks.clear();
+        if (credit > 0) {
+            coinReturn.add(credit);
+            credit = 0;
+        }
     }
 
     public synchronized void cancel() {
@@ -137,5 +155,10 @@ public class VendingMachine {
                 cents -= coin.value();
             }
         }
+    }
+
+    public void hasFault() {
+        fault = true;
+        handleFault();
     }
 }
