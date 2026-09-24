@@ -1,6 +1,7 @@
 package de.sharpsharp.vendingmachine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +36,11 @@ public class VendingMachine {
     // ---- What a customer can do --------------------------------------------
 
     public synchronized void insertCoin(int cents) {
-      credit += cents;
+        credit += cents;
     }
 
-    public int getCredit() {
-      return credit;
+    public synchronized int getCredit() {
+        return credit;
     }
 
     public synchronized void selectDrink(Drink drink) {
@@ -57,7 +58,7 @@ public class VendingMachine {
 
     public synchronized void cancel() {
         if (credit > 0) {
-            coinReturn.add(credit);
+            returnChange(credit);
             credit = 0;
         }
         selectedDrinks.clear();
@@ -112,7 +113,6 @@ public class VendingMachine {
         return new ArrayList<>(coinReturn);
     }
 
-    /* Returns the value of coins in the change slot */
     public int showChange() {
         int total = 0;
         for (int coin : coinReturn) {
@@ -121,8 +121,21 @@ public class VendingMachine {
         return total;
     }
 
-    /* Empties the coins in the change slot */
     public void emptyChange() {
         coinReturn.clear();
+    }
+
+    private void returnChange(int cents) {
+        Coin[] sorted = Coin.values().clone();
+        Arrays.sort(sorted, (a, b) -> b.value() - a.value());
+        for (Coin coin : sorted) {
+            if (coin.value() == 0) {
+                continue;
+            }
+            while (cents >= coin.value()) {
+                coinReturn.add(coin.value());
+                cents -= coin.value();
+            }
+        }
     }
 }
