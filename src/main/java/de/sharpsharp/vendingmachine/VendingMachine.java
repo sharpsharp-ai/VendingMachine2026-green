@@ -1,5 +1,6 @@
 package de.sharpsharp.vendingmachine;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,8 @@ public class VendingMachine {
     /** The time of day, for rules that depend on it. Never read the system time directly: ask the clock. */
     private final Clock clock;
 
+    private List<Drink> tray = new ArrayList<>();
+
     public VendingMachine(Clock clock) {
         this.clock = clock;
         for (Drink drink : Drink.values()) {
@@ -32,7 +35,7 @@ public class VendingMachine {
     }
 
     public synchronized void selectDrink(Drink drink) {
-
+        tray.add(drink);
     }
 
     public synchronized void cancel() {
@@ -75,7 +78,7 @@ public class VendingMachine {
 
     /** The cans that dropped out and have not been taken yet. */
     public synchronized List<Drink> outputTray() {
-        return List.of(Drink.COLA);
+        return tray;
     }
 
     /** The coins that came back and have not been taken yet, in cents. */
