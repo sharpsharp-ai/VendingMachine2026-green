@@ -32,4 +32,8 @@ public class VendingMachineSteps {
     public void oneCanLiesInTheOutputTray(Drink drink) {
         assertThat(machine.outputTray(), contains(drink));
     }
+
+    @Dann("hat Cola einen fixen Preis")
+    public void siehtManBeiColaAuchDenPreisBeimNamen() { assertThat(machine.price(Drink.COLA),is(1));
+    }
 }
