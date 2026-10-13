@@ -32,6 +32,7 @@ public class VendingMachine {
     }
 
     public synchronized void selectDrink(Drink drink) {
+
     }
 
     public synchronized void cancel() {
@@ -74,7 +75,7 @@ public class VendingMachine {
 
     /** The cans that dropped out and have not been taken yet. */
     public synchronized List<Drink> outputTray() {
-        return List.of();
+        return List.of(Drink.COLA);
     }
 
     /** The coins that came back and have not been taken yet, in cents. */
