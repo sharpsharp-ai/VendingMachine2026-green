@@ -20,6 +20,6 @@ public class VendingMaschineTest {
   public void newVendingMachine_hasProductPrices() {
     VendingMachine vendingMachine = new VendingMachine(new FakeClock());
 
-    assertThat(vendingMachine.price(Drink.COLA), is(1));
+    assertThat(vendingMachine.price(Drink.COLA), is(Drink.COLA.getPrice()));
   }
 }

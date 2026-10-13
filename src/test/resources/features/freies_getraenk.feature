@@ -10,4 +10,4 @@ Funktionalität: Freies Getränk
 
   Szenario: Preise für Getränke werden angezeigt
     Angenommen der Automat ist frisch gestartet
-    Dann hat Cola einen fixen Preis
+    Dann hat Cola den korrekten Preis

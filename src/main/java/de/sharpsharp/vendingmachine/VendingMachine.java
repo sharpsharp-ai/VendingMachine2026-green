@@ -23,13 +23,10 @@ public class VendingMachine {
 
     private List<Drink> tray = new ArrayList<>();
 
-    private final Map<Drink, Integer> prices = new EnumMap<>(Drink.class);
-
     public VendingMachine(Clock clock) {
         this.clock = clock;
         for (Drink drink : Drink.values()) {
             stock.put(drink, CANS_PER_SLOT);
-            prices.put(drink, 1);
         }
     }
 
@@ -77,7 +74,7 @@ public class VendingMachine {
 
     /** The price shown behind the name of the drink, in cents. Null: the machine knows no price yet. */
     public synchronized Integer price(Drink drink) {
-        return prices.get(drink);
+        return drink.getPrice();
     }
 
     /** The cans that dropped out and have not been taken yet. */
