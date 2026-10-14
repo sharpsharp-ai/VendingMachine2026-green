@@ -16,6 +16,8 @@ import java.util.Map;
 public class VendingMachine {
 
     public static final int CANS_PER_SLOT = 5;
+    public static final int BEER_TIME_START_HOUR = 16;
+    public static final int BEER_TIME_END_HOUR = 24;
 
     private final Map<Drink, Integer> stock = new EnumMap<>(Drink.class);
     /** The time of day, for rules that depend on it. Never read the system time directly: ask the clock. */
@@ -36,7 +38,15 @@ public class VendingMachine {
     }
 
     public synchronized void selectDrink(Drink drink) {
+        if (drink == Drink.BEER && !isBeerTime()) {
+            return;
+        }
         tray.add(drink);
+    }
+
+    private boolean isBeerTime() {
+        java.time.LocalTime now = clock.now();
+        return now.getHour() >= BEER_TIME_START_HOUR && now.getHour() < BEER_TIME_END_HOUR;
     }
 
     public synchronized void cancel() {
