@@ -33,6 +33,7 @@ Das Repo bringt opencode feste Rollen mit und für jede Rolle einen Command.
 Nichts installieren: `opencode` im Projektordner starten (oder aus IntelliJ anbinden), dann kennt es die Commands.
 
 ```text
+/implementiere Ein Getränk wählen    genau ein Szenario grün, Test zuerst
 /review                              Befunde mit Datei:Zeile, Smell, Vorschlag
 ```
 
@@ -49,6 +50,7 @@ Nach jedem grünen Szenario selbst committen, keine Rolle darf `git commit`.
 
 | Rolle | Darf ändern |
 |---|---|
+| `implementierer` | alles außer Feature-Dateien, Schritten, `specs/`, `pom.xml`, `config/`, `.opencode/`, `AGENTS.md` |
 | `reviewer` | nichts |
 
 In der Shell dürfen alle Rollen dasselbe: mvn, ls, cat, grep, git status/diff/log und `scripts/steps-glossar.sh`.

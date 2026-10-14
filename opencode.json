@@ -33,6 +33,24 @@
     }
   },
   "agent": {
+    "implementierer": {
+      "description": "Macht ein Szenario grün: Unit-Test, Code, Aufräumen. Rührt Szenarien, Schritte und Specs nicht an.",
+      "mode": "primary",
+      "steps": 40,
+      "permission": {
+        "edit": {
+          "*": "allow",
+          "src/test/resources/features/*": "deny",
+          "src/test/java/*Steps.java": "deny",
+          "specs/*": "deny",
+          "pom.xml": "deny",
+          "config/*": "deny",
+          ".opencode/*": "deny",
+          "AGENTS.md": "deny",
+          "opencode.json": "deny"
+        }
+      }
+    },
     "reviewer": {
       "description": "Liest nur. Nennt Befunde mit Datei:Zeile, Smell und Refactoring-Vorschlag.",
       "mode": "primary",
