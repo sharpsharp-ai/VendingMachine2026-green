@@ -75,18 +75,11 @@ public class VendingMachine {
 
     /** In cents. */
     public synchronized int credit() {
-        return 0;
+        return coinTray.stream().mapToInt(Integer::intValue).sum();
     }
 
     public synchronized String message() {
-        if (coinTray.isEmpty()) {
-            return "Bitte Münzen einwerfen";
-        }
-
-        int sum = coinTray.stream().mapToInt(Integer::intValue).sum();
-        String sumFormatted = String.format(Locale.GERMANY, "%.2f", sum / 100.0);;
-
-        return "Guthaben: %s €".formatted(sumFormatted);
+        return "Bitte Münzen einwerfen";
     }
 
     /** True while the display shows a refusal such as "Ausverkauft"; the page then flashes it red. */

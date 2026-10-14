@@ -7,4 +7,4 @@ Funktionalität: Münzen einwerfen und das Guthaben überprüfen
     Angenommen der Automat ist frisch gestartet
     Wenn ich 50 Cents einwerfe
     Und ich 1 Euro einwerfe
-    Dann wird "Guthaben: 1,50 €" angezeigt
+    Dann beträgt das Guthaben 150 Cents

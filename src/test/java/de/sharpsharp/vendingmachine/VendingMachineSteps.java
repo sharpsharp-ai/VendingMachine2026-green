@@ -64,8 +64,8 @@ public class VendingMachineSteps {
         ichCentsEinwerfe(euro * 100);
     }
 
-    @Then("wird {string} angezeigt")
-    public void wirdMessageAngezeigt(String message) {
-        assertThat(machine.message(), is(message));
+    @Then("beträgt das Guthaben {int} Cents")
+    public void wirdMessageAngezeigt(Integer cents) {
+        assertThat(machine.credit(), is(cents));
     }
 }

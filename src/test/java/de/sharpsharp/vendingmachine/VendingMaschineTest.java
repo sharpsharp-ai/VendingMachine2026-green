@@ -64,13 +64,13 @@ public class VendingMaschineTest {
   }
 
   @Test
-  public void newVendingMachine_showsABalance() {
+  public void newVendingMachine_hasACredit() {
     VendingMachine vendingMachine = new VendingMachine(new FakeClock());
 
     vendingMachine.insertCoin(Coin.COIN_50.getValue());
     vendingMachine.insertCoin(Coin.COIN_100.getValue());
 
-    assertThat(vendingMachine.message(), is("Guthaben: 1,50 €"));
+    assertThat(vendingMachine.credit(), is(150));
   }
 
 }
