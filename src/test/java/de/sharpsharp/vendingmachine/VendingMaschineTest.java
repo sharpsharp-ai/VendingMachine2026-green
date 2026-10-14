@@ -6,6 +6,7 @@ import java.time.LocalTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
 public class VendingMaschineTest {
@@ -51,4 +52,25 @@ public class VendingMaschineTest {
     vendingMachine.selectDrink(Drink.BEER);
     assertThat(vendingMachine.outputTray(), org.hamcrest.Matchers.contains(Drink.BEER));
   }
+
+  @Test
+  public void newVendingMachine_getsCoins() {
+    VendingMachine vendingMachine = new VendingMachine(new FakeClock());
+
+    vendingMachine.insertCoin(Coin.COIN_50.getValue());
+    vendingMachine.insertCoin(Coin.COIN_100.getValue());
+
+    assertThat(vendingMachine.coinReturn(), contains(Coin.COIN_50.getValue(), Coin.COIN_100.getValue()));
+  }
+
+  @Test
+  public void newVendingMachine_showsABalance() {
+    VendingMachine vendingMachine = new VendingMachine(new FakeClock());
+
+    vendingMachine.insertCoin(Coin.COIN_50.getValue());
+    vendingMachine.insertCoin(Coin.COIN_100.getValue());
+
+    assertThat(vendingMachine.message(), is("Guthaben: 1,50 €"));
+  }
+
 }

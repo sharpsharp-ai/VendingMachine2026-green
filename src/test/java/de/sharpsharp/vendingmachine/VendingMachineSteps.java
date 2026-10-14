@@ -6,6 +6,7 @@ import io.cucumber.java.de.Angenommen;
 import io.cucumber.java.de.Dann;
 import io.cucumber.java.de.Und;
 import io.cucumber.java.de.Wenn;
+import io.cucumber.java.en.Then;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -51,5 +52,20 @@ public class VendingMachineSteps {
     @Dann("liegt nichts im Ausgabefach")
     public void liegtNichtsImAusgabefach() {
         assertThat(machine.outputTray(), empty());
+    }
+
+    @Wenn("ich {int} Cents einwerfe")
+    public void ichCentsEinwerfe(Integer cents) {
+        machine.insertCoin(cents);
+    }
+
+    @Wenn("ich {int} Euro einwerfe")
+    public void ichEuroEinwerfe(Integer euro) {
+        ichCentsEinwerfe(euro * 100);
+    }
+
+    @Then("wird {string} angezeigt")
+    public void wirdMessageAngezeigt(String message) {
+        assertThat(machine.message(), is(message));
     }
 }

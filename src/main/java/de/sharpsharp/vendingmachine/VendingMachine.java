@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -25,6 +26,10 @@ public class VendingMachine {
 
     private List<Drink> tray = new ArrayList<>();
 
+    private List<Integer> coinTray = new ArrayList<>();
+
+    private final Map<Drink, Integer> prices = new EnumMap<>(Drink.class);
+
     public VendingMachine(Clock clock) {
         this.clock = clock;
         for (Drink drink : Drink.values()) {
@@ -35,6 +40,10 @@ public class VendingMachine {
     // ---- What a customer can do --------------------------------------------
 
     public synchronized void insertCoin(int cents) {
+        Coin coin = Coin.valueOf(cents);
+        if (coin != null) {
+            coinTray.add(coin.getValue());
+        }
     }
 
     public synchronized void selectDrink(Drink drink) {
@@ -70,7 +79,14 @@ public class VendingMachine {
     }
 
     public synchronized String message() {
-        return "Bitte Münzen einwerfen";
+        if (coinTray.isEmpty()) {
+            return "Bitte Münzen einwerfen";
+        }
+
+        int sum = coinTray.stream().mapToInt(Integer::intValue).sum();
+        String sumFormatted = String.format(Locale.GERMANY, "%.2f", sum / 100.0);;
+
+        return "Guthaben: %s €".formatted(sumFormatted);
     }
 
     /** True while the display shows a refusal such as "Ausverkauft"; the page then flashes it red. */
@@ -94,6 +110,6 @@ public class VendingMachine {
 
     /** The coins that came back and have not been taken yet, in cents. */
     public synchronized List<Integer> coinReturn() {
-        return List.of();
+        return coinTray;
     }
 }
