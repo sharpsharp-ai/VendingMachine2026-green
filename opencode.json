@@ -33,6 +33,28 @@
     }
   },
   "agent": {
+    "spec-autor": {
+      "description": "Schreibt die Spec einer Story nach specs/. Ändert nichts anderes.",
+      "mode": "primary",
+      "steps": 20,
+      "permission": {
+        "edit": { "*": "deny", "specs/*": "allow" }
+      }
+    },
+    "test-autor": {
+      "description": "Schreibt Szenarien und Schritte. Ändert keinen Produktivcode.",
+      "mode": "primary",
+      "steps": 30,
+      "permission": {
+        "edit": {
+          "*": "deny",
+          "src/test/resources/features/*": "allow",
+          "src/test/java/*Steps.java": "allow",
+          "src/test/java/*ParameterTypes.java": "allow",
+          "src/test/java/*Fake*.java": "allow"
+        }
+      }
+    },
     "implementierer": {
       "description": "Macht ein Szenario grün: Unit-Test, Code, Aufräumen. Rührt Szenarien, Schritte und Specs nicht an.",
       "mode": "primary",

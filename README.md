@@ -33,12 +33,16 @@ Das Repo bringt opencode feste Rollen mit und für jede Rolle einen Command.
 Nichts installieren: `opencode` im Projektordner starten (oder aus IntelliJ anbinden), dann kennt es die Commands.
 
 ```text
+/spec 1                              Spec nach specs/1-alles-umsonst/spec.md
+/akzeptanztest 1                     Szenarien nach features/, Schritte nach VendingMachineSteps.java
 /implementiere Ein Getränk wählen    genau ein Szenario grün, Test zuerst
 /review                              Befunde mit Datei:Zeile, Smell, Vorschlag
 ```
 
 Vor jedem Command eine neue Session (`/new`): der Command bringt alles mit, was die Rolle wissen muss.
 Nach jedem grünen Szenario selbst committen, keine Rolle darf `git commit`.
+
+Vom Terminal aus: `scripts/bis-gruen.sh "Ein Getränk wählen"` ruft den Implementierer bis zu fünfmal, bis `mvn -q verify` grün ist.
 
 | Datei | Wirkung |
 |---|---|
@@ -47,9 +51,12 @@ Nach jedem grünen Szenario selbst committen, keine Rolle darf `git commit`.
 | `opencode.json` | die Rollen mit ihren Rechten, die Bash-Whitelist |
 | `.opencode/commands/*.md` | die Commands; lesbares Markdown, das ist der Prompt |
 | `.opencode/skills/*/SKILL.md` | Checklisten, die die Commands einfügen |
+| `scripts/bis-gruen.sh` | Implementierer in Schleife, bis grün, höchstens fünf Runden |
 
 | Rolle | Darf ändern |
 |---|---|
+| `spec-autor` | nur `specs/` |
+| `test-autor` | Feature-Dateien, `*Steps.java`, `ParameterTypes.java`, `Fake*.java` |
 | `implementierer` | alles außer Feature-Dateien, Schritten, `specs/`, `pom.xml`, `config/`, `.opencode/`, `AGENTS.md` |
 | `reviewer` | nichts |
 

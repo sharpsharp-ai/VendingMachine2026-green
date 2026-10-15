@@ -19,5 +19,6 @@ Regeln:
 - Lies die geänderten Dateien ganz, nicht nur den Diff.
 - Prüfe jeden Punkt des Skills. Je Befund eine Zeile: `Datei:Zeile`, Name des Smells, Refactoring-Vorschlag in einem Satz.
 - Prüfe zusätzlich: Testwerte im Produktivcode, Fachlogik in `Main`, Tests, die nichts prüfen.
+- Prüfe Szenarien gegen die elf Regeln in `.opencode/skills/akzeptanztest-regeln/SKILL.md`.
 - Ändere nichts.
 - Gibt es nichts Wesentliches, antworte genau: "Keine wesentlichen Befunde."
